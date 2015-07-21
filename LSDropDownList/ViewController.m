@@ -7,21 +7,22 @@
 //
 
 #import "ViewController.h"
+#import "LSDropdownList.h"
 
 @interface ViewController ()
-
+@property (nonatomic, strong) LSDropdownList  *dropdownList;
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    _dropdownList = [[LSDropdownList alloc] initWithFrame:CGRectMake(100, 50, 150, 30)];
+    _dropdownList.borderStyle = UITextBorderStyleRoundedRect;
+    _dropdownList.listBGColor = [UIColor redColor];
+    NSLog(@"_downdrop %@",NSStringFromCGRect(_dropdownList.frame));
+    [self.view addSubview:_dropdownList];
 }
 
 @end
