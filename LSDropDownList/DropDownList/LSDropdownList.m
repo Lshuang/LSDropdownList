@@ -62,6 +62,15 @@
     self.listView.delegate = self;
     self.listView.backgroundColor = self.listBGColor;
     self.listView.separatorColor = self.lineColor;
+    //self.listView.separatorInset = UIEdgeInsetsMake(0,  -50, 0, 0);
+    //为了实现UITableView的分割线从最左边开始绘制
+    if ([self.listView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [self.listView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([self.listView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [self.listView setLayoutMargins:UIEdgeInsetsZero];
+    }
     self.listView.hidden = !_showDropList;//默认listView隐藏，后面根据showDroplist判断
     [self addSubview:self.listView];
 }
@@ -110,6 +119,17 @@
     [self setShowDropList:NO];//隐藏下拉框
 }
 
+//实现UITableView的分割线从最左边开始。
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
+        [cell setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
 #pragma mark - 设置属性方法
 - (BOOL)showDropList {
     return  _showDropList;
@@ -119,9 +139,27 @@
     _showDropList = showDropList;
     if (_showDropList) {
         self.frame = newFrame;
+        [self setNeedsDisplay];
     } else {
         self.frame = oldFrame;
     }
     self.listView.hidden = !showDropList;
+}
+
+#pragma mark - 私有方法
+//为下拉框加上一个矩形边框
+//收到setNeedsDisplay方法时调用
+- (void)drawRect:(CGRect)rect {
+    NSLog(@"rect - %@",NSStringFromCGRect(rect));
+    CGContextRef contextRef = UIGraphicsGetCurrentContext();
+    CGRect drawRect;
+    if (_showDropList) {
+        CGContextSetStrokeColorWithColor(contextRef, [self.lineColor CGColor]);
+        drawRect = self.listView.frame;
+        CGContextStrokeRect(contextRef, drawRect);//画矩形
+        //CGContextStrokeRectWithWidth(contextRef, drawRect, self.borderWidth);
+    } else {//下拉框不显示
+        return;
+    }
 }
 @end
