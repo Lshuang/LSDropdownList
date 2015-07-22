@@ -25,29 +25,26 @@
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
+- (instancetype)initWithFrame:(CGRect)frame list:(NSArray *)list {
     self = [super initWithFrame:frame];
     if (self) {
+        self.list = list;
         //初始化控件
-        //设置默认下拉列表数据
-        self.list = [[NSArray alloc] initWithObjects:@"1",@"2",@"3", nil];
         self.borderStyle = UITextBorderStyleRoundedRect;
         _showDropList = NO;//默认不显示下拉列表
         oldFrame = frame;//未下拉时控件的初始大小
         //当下拉框显示时，计算出控件的大小。
-        newFrame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height * 4);
+        newFrame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height * (self.list.count + 1));
         self.lineColor = [UIColor grayColor];//默认列表框边框线为灰色.
         self.listBGColor = [UIColor whiteColor];//默认列表框背景色为白色。
         self.borderWidth = 1;//默认列表框边框宽度为1。
         //把背景色设为透明色，否则会有一个黑色的边
         self.backgroundColor = [UIColor clearColor];
         [self drawView];//调用方法绘制控件
+
     }
-    
     return self;
 }
-
 - (void)drawView {
     //文本框
     self.textField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, oldFrame.size.width, oldFrame.size.height)];
@@ -57,7 +54,7 @@
     [self.textField addTarget:self action:@selector(dropDownAction) forControlEvents:UIControlEventAllTouchEvents];//增加文本框的触摸事件响应
     
     //下拉列表
-    self.listView = [[UITableView alloc] initWithFrame:CGRectMake(self.borderWidth, oldFrame.size.height + self.borderWidth, oldFrame.size.width - 2 * self.borderWidth, oldFrame.size.height * 3 - 2 * self.borderWidth)];
+    self.listView = [[UITableView alloc] initWithFrame:CGRectMake(self.borderWidth, oldFrame.size.height + self.borderWidth, oldFrame.size.width - 2 * self.borderWidth, oldFrame.size.height * self.list.count - 2 * self.borderWidth)];
     self.listView.dataSource = self;
     self.listView.delegate = self;
     self.listView.backgroundColor = self.listBGColor;
@@ -117,6 +114,11 @@
     NSLog(@"select index %ld",(long)indexPath.row);
     self.textField.text = (NSString *)[self.list objectAtIndex:indexPath.row];
     [self setShowDropList:NO];//隐藏下拉框
+    
+    if (self.delegate != nil) {
+        [self.delegate dropdownListDidSelectedItem:self.textField.text];
+        //[self.delegate performSelector:@selector(dropdownListDidSelectedItem:) withObject:self.textField.text];
+    }
 }
 
 //实现UITableView的分割线从最左边开始。
@@ -139,6 +141,7 @@
     _showDropList = showDropList;
     if (_showDropList) {
         self.frame = newFrame;
+        NSLog(@"self--- %@",NSStringFromCGRect(self.frame));
         [self setNeedsDisplay];
     } else {
         self.frame = oldFrame;

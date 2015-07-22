@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "LSDropdownList.h"
 
-@interface ViewController ()
+@interface ViewController ()<LSDropdownListDelegate>
 @property (nonatomic, strong) LSDropdownList  *dropdownList;
 @end
 
@@ -17,12 +17,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    _dropdownList = [[LSDropdownList alloc] initWithFrame:CGRectMake(100, 50, 150, 30)];
-    _dropdownList.borderStyle = UITextBorderStyleRoundedRect;
-    _dropdownList.listBGColor = [UIColor redColor];
-    NSLog(@"_downdrop %@",NSStringFromCGRect(_dropdownList.frame));
+    NSArray *list = [NSArray arrayWithObjects:@"管理员",@"开发人员",@"游客",@"用户", nil];
+    _dropdownList = [[LSDropdownList alloc] initWithFrame:CGRectMake(100, 50, 150, 30) list:list];
+    _dropdownList.delegate = self;
     [self.view addSubview:_dropdownList];
+    
 }
 
+- (void)dropdownListDidSelectedItem:(NSString *)item {
+    NSLog(@"%@",item);
+}
 @end
