@@ -6,6 +6,7 @@
 - ![shoot](http://ww1.sinaimg.cn/large/987b958agw1eubmy4tthbg208w0gaabp.gif)
 
 ##使用方法
+`Objective-C
 ```NSArray *list = [NSArray arrayWithObjects:@"管理员",@"开发人员",@"游客",@"用户", nil];
     _dropdownList = [[LSDropdownList alloc] initWithFrame:CGRectMake(100, 50, 150, 30) list:list];
     _dropdownList.delegate = self;
